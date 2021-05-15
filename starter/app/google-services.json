@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "702037140751",
+    "firebase_url": "https://lojaflutter-5feb3.firebaseio.com",
+    "project_id": "lojaflutter-5feb3",
+    "storage_bucket": "lojaflutter-5feb3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702037140751:android:376fd2541a1d7f83698a7a",
+        "android_client_info": {
+          "package_name": "com.udacity.project4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702037140751-kspua0t97rvubimdmrskdoioh0vmc0l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udacity.project4",
+            "certificate_hash": "de10a1bbf0991584b1385104079970dcffacfa7c"
+          }
+        },
+        {
+          "client_id": "702037140751-uh3jl8oa2ca2v452g6eb4v1bgltm9vjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdKMsSuWk28kv9lo-skE1sHOzpXUvu4us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702037140751-uh3jl8oa2ca2v452g6eb4v1bgltm9vjp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
