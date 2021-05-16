@@ -1,11 +1,17 @@
 package com.udacity.project4.authentication
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ActivityScenario
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityAuthenticationBinding
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.udacity.project4.locationreminders.RemindersActivity
 
 /**
  * This class should be the starting point of the app, It asks the users to sign in / register, and redirects the
@@ -14,6 +20,10 @@ import com.firebase.ui.auth.AuthUI
 class AuthenticationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthenticationBinding
+
+    companion object {
+        const val REQUEST_CODE = 1001
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +34,21 @@ class AuthenticationActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-//         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
+    }
 
-//          TODO: If the user was authenticated, send him to RemindersActivity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-//          TODO: a bonus is to customize the sign in flow to look nice using :
-        //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
-
+        if (requestCode == REQUEST_CODE) {
+            val response = IdpResponse.fromResultIntent(data)
+            if (resultCode == Activity.RESULT_OK) {
+                Log.i("onActivityResult", "Success")
+                startActivity(Intent(this, RemindersActivity::class.java))
+            } else {
+                Log.i("onActivityResult", "Failed - error ${response?.error}")
+                Toast.makeText(this, "Failed to login", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun launchSignInFlow() {
@@ -40,7 +58,7 @@ class AuthenticationActivity : AppCompatActivity() {
 
         startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers)
-                .build(), 1001
+                .build(), REQUEST_CODE
         )
     }
 }
