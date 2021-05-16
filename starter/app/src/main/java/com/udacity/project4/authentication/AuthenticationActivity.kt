@@ -44,6 +44,7 @@ class AuthenticationActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 Log.i("onActivityResult", "Success")
                 startActivity(Intent(this, RemindersActivity::class.java))
+                finish()
             } else {
                 Log.i("onActivityResult", "Failed - error ${response?.error}")
                 Toast.makeText(this, "Failed to login", Toast.LENGTH_SHORT).show()
