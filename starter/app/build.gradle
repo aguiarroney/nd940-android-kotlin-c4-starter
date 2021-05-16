@@ -15,6 +15,7 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -31,12 +32,23 @@ android {
         returnDefaultValues = true
     }
 
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
+
     //dataBinding {
     //    enabled = true
     //    enabledForTests = true
     //}
     buildFeatures {
         dataBinding true
+    }
+
+    viewBinding {
+        enabled = true
     }
 }
 
@@ -124,6 +136,9 @@ dependencies {
 
     //firebase dependencies
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
+    implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
 
 
 }
