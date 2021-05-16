@@ -14,12 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.fragment.app.FragmentContainerView
+        <fragment
             android:id="@+id/map_fragment"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".SelectionLocationFragment" />
+            tools:context="com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectedLocationFragment" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
