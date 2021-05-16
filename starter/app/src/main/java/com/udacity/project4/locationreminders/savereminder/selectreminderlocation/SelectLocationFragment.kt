@@ -58,16 +58,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 //        TODO: put a marker to location that the user selected
 
 
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
-
         return binding.root
     }
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+        _map.setOnPoiClickListener { poi ->
+            _viewModel.showToast.postValue("Point of interest selected")
+            _viewModel.selectedPOI.postValue(poi)
+            _viewModel.latitude.postValue(poi.latLng.latitude)
+            _viewModel.longitude.postValue(poi.latLng.longitude)
+            _viewModel.reminderSelectedLocationStr.postValue(poi.name)
+            _viewModel.navigationCommand.postValue(
+                NavigationCommand.Back
+            )
+
+        }
     }
 
 
@@ -103,12 +108,24 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onMapReady(mMap: GoogleMap?) {
         _map = mMap!!
         grantLocationPermission()
-        _map.moveCamera(CameraUpdateFactory.newLatLng(startLocation()))
+        setPointOfInsterest()
+        onLocationSelected()
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation(), 15f))
+    }
+
+    private fun setPointOfInsterest() {
+        _map.setOnPoiClickListener { poi ->
+            val poiMarker = _map.addMarker(
+                MarkerOptions()
+                    .position(poi.latLng)
+                    .title(poi.name)
+            )
+            poiMarker.showInfoWindow()
+        }
     }
 
     private fun startLocation(): LatLng {
-        val startLocation = LatLng(-22.904019801666927, -43.17521344776749)
-        return startLocation
+        return LatLng(-22.904079099378386, -43.17523517375369)
     }
 
 
