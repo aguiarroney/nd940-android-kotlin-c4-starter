@@ -78,6 +78,10 @@ class RemindersLocalRepositoryTest {
         assertThat(retrievedReminder, CoreMatchers.notNullValue())
         retrievedReminder as Result.Success
         assertThat(retrievedReminder.data.id, `is`(reminder.id))
+
+        retrievedReminder as Result.Error
+        assertThat(retrievedReminder.message, `is`("Reminder not found!"))
+
     }
 
     @Test

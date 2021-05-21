@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
@@ -10,6 +11,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -37,6 +39,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentSelectLocationBinding
 
     private lateinit var _map: GoogleMap
+
+    private val REQUEST_LOCATION_PERMISSION = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -107,11 +111,30 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onMapReady(mMap: GoogleMap?) {
         _map = mMap!!
-        grantLocationPermission()
         setPointOfInsterest()
         onLocationSelected()
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation(), 15f))
+        setMapLongCLick()
+        enableMyLocation()
+//        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation(), 15f))
     }
+
+    private fun setMapLongCLick() {
+        _map.setOnMapLongClickListener {
+            _map.addMarker(
+                MarkerOptions().position(it)
+            )
+
+            _viewModel.showToast.postValue("Random Point of interest selected")
+
+            _viewModel.latitude.postValue(it.latitude)
+            _viewModel.longitude.postValue(it.longitude)
+            _viewModel.reminderSelectedLocationStr.postValue("New place")
+            _viewModel.navigationCommand.postValue(
+                NavigationCommand.Back
+            )
+        }
+    }
+
 
     private fun setPointOfInsterest() {
         _map.setOnPoiClickListener { poi ->
@@ -129,20 +152,42 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-    private fun grantLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        }
-        _map.isMyLocationEnabled = true
-
+    private fun isPermissionGranted(): Boolean {
+        @Suppress("DEPRECATED_IDENTITY_EQUALS")
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) === PackageManager.PERMISSION_GRANTED
     }
 
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation() {
+        if (isPermissionGranted()) {
+            _map.isMyLocationEnabled = true
+            _map.getUiSettings().setMyLocationButtonEnabled(true)
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
+        }
+    }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                enableMyLocation()
+            } else
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

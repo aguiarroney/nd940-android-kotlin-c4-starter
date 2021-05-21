@@ -11,6 +11,8 @@ import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.*
 import org.junit.runner.RunWith
@@ -119,5 +121,25 @@ class RemindersListViewModelTest {
 
         Assert.assertThat(noRemindersMessage, Matchers.`is`("No reminders found"))
 
+    }
+
+    @Test
+    fun expectError() = runBlockingTest {
+        dataSource.setReturnError(true)
+        remindersListViewModel.loadReminders()
+        MatcherAssert.assertThat(
+            remindersListViewModel.showNoData.getOrAwaitValue(),
+            CoreMatchers.`is`(true)
+        )
+    }
+
+    @Test
+    fun expectSuccess() = runBlockingTest {
+        dataSource.setReturnError(false)
+        remindersListViewModel.loadReminders()
+        MatcherAssert.assertThat(
+            remindersListViewModel.showNoData.getOrAwaitValue(),
+            CoreMatchers.`is`(false)
+        )
     }
 }
