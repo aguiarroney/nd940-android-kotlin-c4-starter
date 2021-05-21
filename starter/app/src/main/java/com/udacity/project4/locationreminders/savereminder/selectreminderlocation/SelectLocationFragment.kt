@@ -166,8 +166,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             _map.isMyLocationEnabled = true
             _map.getUiSettings().setMyLocationButtonEnabled(true)
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
@@ -179,15 +178,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                enableMyLocation()
-            } else
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION -> {
+                if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    enableMyLocation()
+                }
+                else
+                    Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+
+            }
+            else ->Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
