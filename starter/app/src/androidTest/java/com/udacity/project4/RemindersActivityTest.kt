@@ -18,7 +18,9 @@ import com.udacity.project4.locationreminders.data.local.RemindersLocalRepositor
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -122,7 +124,7 @@ class RemindersActivityTest :
     }
 
     @Test
-    fun createReminder() {
+    fun createReminder()  = runBlocking{
         viewModel.reminderSelectedLocationStr.postValue("LOCATION")
         viewModel.latitude.postValue(0.0)
         viewModel.longitude.postValue(0.0)
