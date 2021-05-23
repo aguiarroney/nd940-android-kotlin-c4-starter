@@ -91,7 +91,7 @@ class SaveReminderFragment : BaseFragment() {
                 longitude
             )
 
-            if(_viewModel.validateAndSaveReminder(reminderDataItem)) {
+            if (_viewModel.validateAndSaveReminder(reminderDataItem)) {
                 checkDeviceLocationSettingsAndStartGeofence(dataItem = reminderDataItem)
             }
         }
@@ -132,16 +132,14 @@ class SaveReminderFragment : BaseFragment() {
             // Permission denied.
             Snackbar.make(
                 requireView(),
-                R.string.permission_denied_explanation, Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction(R.string.settings) {
-                    // Displays App settings screen.
-                    startActivity(Intent().apply {
-                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
-                }.show()
+                R.string.permission_denied_explanation, Snackbar.LENGTH_SHORT
+            ).setAction(R.string.settings) {
+                startActivity(Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+            }.show()
         } else {
             checkDeviceLocationSettingsAndStartGeofence()
         }
