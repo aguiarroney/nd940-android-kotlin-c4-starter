@@ -101,6 +101,7 @@ class SaveReminderFragment : BaseFragment() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
+        removeGeofences()
     }
 
     override fun onStart() {
@@ -114,6 +115,12 @@ class SaveReminderFragment : BaseFragment() {
         } else {
             checkDeviceLocationSettingsAndStartGeofence()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON)
+            checkDeviceLocationSettingsAndStartGeofence(false)
     }
 
     override fun onRequestPermissionsResult(
@@ -228,6 +235,18 @@ class SaveReminderFragment : BaseFragment() {
                 ).setAction(android.R.string.ok) {
                     checkDeviceLocationSettingsAndStartGeofence(dataItem = dataItem)
                 }.show()
+                
+//                val snackbar = Snackbar.make(
+//                    requireView(),
+//                    R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
+//                )
+//
+//                snackbar.setAction(android.R.string.ok) {
+//                    snackbar.dismiss()
+//                    checkDeviceLocationSettingsAndStartGeofence(dataItem = dataItem)
+//                }
+//
+//                snackbar.show()
             }
         }
     }
@@ -262,6 +281,20 @@ class SaveReminderFragment : BaseFragment() {
                 if ((it.message != null)) {
                     Log.i("SaveReminderFragment", it.message ?: "Error")
                 }
+            }
+        }
+    }
+
+    private fun removeGeofences() {
+        if (!foregroundAndBackGroundLocationPermissionApproved()) {
+            return
+        }
+        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+            addOnSuccessListener {
+                Log.d("removeGeofences", "Geofence removed")
+            }
+            addOnFailureListener {
+                Log.d("removeGeofences", "Failed on remove Geofence")
             }
         }
     }
