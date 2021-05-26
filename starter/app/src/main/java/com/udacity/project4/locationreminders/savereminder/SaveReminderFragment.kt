@@ -69,7 +69,7 @@ class SaveReminderFragment : BaseFragment() {
         )
 
         snack2 = Snackbar.make(
-            requireView(),
+            requireActivity().findViewById(android.R.id.content),
             R.string.permission_denied_explanation, Snackbar.LENGTH_SHORT
         )
 
