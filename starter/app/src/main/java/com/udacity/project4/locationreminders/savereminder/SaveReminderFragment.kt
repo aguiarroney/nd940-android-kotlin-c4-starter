@@ -37,6 +37,8 @@ class SaveReminderFragment : BaseFragment() {
     //Get the view model this time as a single to be shared with the another fragment
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
+    private lateinit var snack1: Snackbar
+    private lateinit var snack2: Snackbar
 
     private val runningQOrLater =
         android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
@@ -60,6 +62,16 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.viewModel = _viewModel
         geofencingClient = LocationServices.getGeofencingClient(requireContext())
+
+        snack1 = Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            R.string.location_required_error, Snackbar.LENGTH_SHORT
+        )
+
+        snack2 = Snackbar.make(
+            requireView(),
+            R.string.permission_denied_explanation, Snackbar.LENGTH_SHORT
+        )
 
         return binding.root
     }
@@ -102,6 +114,8 @@ class SaveReminderFragment : BaseFragment() {
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
         removeGeofences()
+        snack1.dismiss()
+        snack2.dismiss()
     }
 
     override fun onStart() {
@@ -137,10 +151,7 @@ class SaveReminderFragment : BaseFragment() {
                     PackageManager.PERMISSION_DENIED)
         ) {
             // Permission denied.
-            Snackbar.make(
-                requireView(),
-                R.string.permission_denied_explanation, Snackbar.LENGTH_SHORT
-            ).setAction(R.string.settings) {
+            snack2.setAction(R.string.settings) {
                 startActivity(Intent().apply {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
@@ -229,10 +240,8 @@ class SaveReminderFragment : BaseFragment() {
                     )
                 }
             } else {
-                Snackbar.make(
-                    requireView(),
-                    R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
-                ).setAction(android.R.string.ok) {
+                snack1.setAction(android.R.string.ok) {
+
                     checkDeviceLocationSettingsAndStartGeofence(dataItem = dataItem)
                 }.show()
                 
