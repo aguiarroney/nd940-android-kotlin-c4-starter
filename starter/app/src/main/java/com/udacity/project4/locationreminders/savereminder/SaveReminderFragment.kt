@@ -241,7 +241,6 @@ class SaveReminderFragment : BaseFragment() {
                 }
             } else {
                 snack1.setAction(android.R.string.ok) {
-
                     checkDeviceLocationSettingsAndStartGeofence(dataItem = dataItem)
                 }.show()
                 
@@ -256,6 +255,13 @@ class SaveReminderFragment : BaseFragment() {
 //                }
 //
 //                snackbar.show()
+            }
+        }
+        locationSettingsResponseTask.addOnCompleteListener {
+            if ( it.isSuccessful ) {
+                dataItem?.let { reminderDataItem ->
+                    addGeofence(reminderDataItem)
+                }
             }
         }
     }
