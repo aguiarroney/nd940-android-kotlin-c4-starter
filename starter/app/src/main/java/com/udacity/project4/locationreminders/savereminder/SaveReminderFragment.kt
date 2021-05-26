@@ -113,7 +113,6 @@ class SaveReminderFragment : BaseFragment() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
-        removeGeofences()
         snack1.dismiss()
         snack2.dismiss()
     }
