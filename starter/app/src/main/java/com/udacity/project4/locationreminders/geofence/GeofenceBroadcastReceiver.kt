@@ -22,10 +22,13 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT) {
-            val geofencingEvent = GeofencingEvent.fromIntent(intent)
-            Log.i("GeofenceBroadcast", geofencingEvent.triggeringGeofences.toString())
+            val geofenceEvent = GeofencingEvent.fromIntent(intent)
+            Log.i("GeofenceBroadcast", geofenceEvent.triggeringGeofences.toString())
 
-            if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            if (geofenceEvent.hasError())
+                return
+
+            if (geofenceEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
                 GeofenceTransitionsJobIntentService.enqueueWork(context, intent)
             }
         }
