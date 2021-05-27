@@ -283,17 +283,20 @@ class SaveReminderFragment : BaseFragment() {
             .addGeofence(geofence)
             .build()
 
-        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-            addOnSuccessListener {
-                Log.e("Add Geofence", geofence.requestId)
-            }
-            addOnFailureListener {
-                Toast.makeText(
-                    requireContext(), R.string.geofences_not_added,
-                    Toast.LENGTH_SHORT
-                ).show()
-                if ((it.message != null)) {
-                    Log.i("SaveReminderFragment", it.message ?: "Error")
+        if(isAdded){
+
+            geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+                addOnSuccessListener {
+                    Log.e("Add Geofence", geofence.requestId)
+                }
+                addOnFailureListener {
+                    Toast.makeText(
+                        requireContext(), R.string.geofences_not_added,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    if ((it.message != null)) {
+                        Log.i("SaveReminderFragment", it.message ?: "Error")
+                    }
                 }
             }
         }
