@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -39,6 +40,7 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var binding: FragmentSaveReminderBinding
     private lateinit var snack1: Snackbar
     private lateinit var snack2: Snackbar
+    private lateinit var contxt: Context
 
     private val runningQOrLater =
         android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
@@ -46,9 +48,20 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var geofencingClient: GeofencingClient
 
     private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
+        val intent = Intent(contxt, GeofenceBroadcastReceiver::class.java)
         intent.action = ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        PendingIntent.getBroadcast(contxt, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.i("Context", "Atachoou")
+        contxt = context
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.i("Context", "DESATACHOU")
     }
 
     override fun onCreateView(
@@ -61,7 +74,7 @@ class SaveReminderFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(true)
 
         binding.viewModel = _viewModel
-        geofencingClient = LocationServices.getGeofencingClient(requireContext())
+        geofencingClient = LocationServices.getGeofencingClient(contxt)
 
         snack1 = Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
@@ -283,7 +296,7 @@ class SaveReminderFragment : BaseFragment() {
             .addGeofence(geofence)
             .build()
 
-        if(isAdded){
+//        if(isAdded){
 
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                 addOnSuccessListener {
@@ -291,7 +304,7 @@ class SaveReminderFragment : BaseFragment() {
                 }
                 addOnFailureListener {
                     Toast.makeText(
-                        requireContext(), R.string.geofences_not_added,
+                        contxt, R.string.geofences_not_added,
                         Toast.LENGTH_SHORT
                     ).show()
                     if ((it.message != null)) {
@@ -299,7 +312,10 @@ class SaveReminderFragment : BaseFragment() {
                     }
                 }
             }
-        }
+//        }
+//        else{
+//            Log.i("Add geofence", "deu merda")
+//        }
     }
 
     private fun removeGeofences() {
